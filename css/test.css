@@ -1,0 +1,25 @@
+
+html
+{
+
+}
+
+tr
+{
+}
+
+td
+{
+    border:2px solid black;
+}
+
+th
+{
+    border:2px solid black;
+}
+
+table
+{
+
+    border-collapse:collapse;
+}
