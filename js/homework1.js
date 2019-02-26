@@ -49,16 +49,19 @@ var lastNode;
 
 window.onload=function()
 {
+    // localStorage.clear();
     checkBox(DIVITEM,["全部","手机","笔记本","智能音箱"],1);
     checkBox(DIVREGION,["全部","华东","华南","华北"],1);
 
-    if(localStorage.getItem("sData"))
+    if(!localStorage.getItem("sData"))
     {
         localStorage.setItem("sData",JSON.stringify(fixedData));
-        sourceData=clone(fixedData);
+        sourceData=new Object();
+        sourceData=Object.assign(fixedData);
     }
     else
         sourceData=JSON.parse(localStorage.getItem("sData"));
+    // console.log("sourceData=",sourceData);
 
     let divItem=document.getElementById(DIVITEM);
     let divRegion=document.getElementById(DIVREGION);
@@ -94,7 +97,11 @@ window.onload=function()
     }
     divForm.onclick=function(e)
     {
-        clickTd(e);
+        clickTd(e,rect,line);
+    }
+    window.onkeydown=function(e)
+    {
+        updateInput(e,rect,line);
     }
 
     changeOption();
@@ -106,6 +113,7 @@ function checkBox(id,arrayList,num)
     let div=document.querySelector("#"+id);
     for(let i in arrayList)
     {
+        // console.log("arrayList[",i,"]=",arrayList[i]);
         let label=document.createElement("label");
         let radio=document.createElement("input");
         radio.type="checkbox";
@@ -302,7 +310,7 @@ function paintForm(e,rect,line)
         let i;
         for(i in child)
         {
-            console.log("child[i]=",child[i]);
+            // console.log("child[i]=",child[i]);
             if(child[i]===e.target.parentElement)
                 break;
         }
@@ -314,12 +322,7 @@ function paintForm(e,rect,line)
     {
         if(sourceData[i].product===th1.textContent && sourceData[i].region===th2.textContent)
         {
-            rect.clear("white");
-            rect.paintAxis(CANVAS_WIDTH,CANVAS_HEIGHT,"rgba(60,38,146,0.8)",4);
-            rect.paintRectChart(sourceData[i].sale,"rgba(120,11,55,0.6)");
-            line.clear("white");
-            line.paintAxis(CANVAS_WIDTH,CANVAS_HEIGHT,"rgba(60,38,146,0.8)",4);
-            line.paintLineChart(sourceData[i].sale,"rgba(120,11,55,0.6)",3);
+            updateCanvas(sourceData[i].sale,rect,line);
             break;
         }
     }
@@ -338,7 +341,7 @@ function paintAll(line)
     line.paintAllLineChart(para);
 }
 
-function clickTd(e)
+function clickTd(e,rect,line)
 {
     if(e.target.nodeName.toLowerCase()!=="td")
         return;
@@ -352,15 +355,14 @@ function clickTd(e)
     input.focus();
     input.onblur=function()
     {
-        input.parentElement.innerHTML=input.value;
         let child=input.parentElement.parentElement.parentElement.children;
-        let root=input.parentElement.parentElement.children;
+        let root=input.parentElement.parentElement;
         let th1=root.querySelector("th:nth-of-type(1)");
         let th2=root.querySelector("th:nth-of-type(2)");
         let order;
-        for(let i in root)
+        for(let i in root.children)
         {
-            if(root[i]===input.parentElement)
+            if(root.children[i]===input.parentElement)
                 order=i-2;
         }
 
@@ -370,7 +372,7 @@ function clickTd(e)
             let i;
             for(i in child)
             {
-                console.log("child[i]=",child[i]);
+                // console.log("child[i]=",child[i]);
                 if(child[i]===input.parentElement.parentElement)
                     break;
             }
@@ -381,25 +383,96 @@ function clickTd(e)
         for(let i in sourceData)
         {
             if(sourceData[i].product===th1.textContent&&sourceData[i].region===th2.textContent)
+            {
                 sourceData[i].sale[order]=Number(input.value);
+                updateCanvas(sourceData[i].sale,rect,line);
+            }
         }
 
-        localStorage.setItem("sData",JSON.parse(sourceData));
+        localStorage.setItem("sData",JSON.stringify(sourceData));
+        let parent=input.parentElement;
+        let value=input.value;
+        parent.innerHTML=value;
     }
 }
 
-Array.prototype.clone=function()
+// Array.prototype.clone=function()
+// {
+//     let array=new Array();
+//     for(let i in this)
+//         array[i]=this[i];
+//     return array;
+// }
+
+// function clone(array)
+// {
+//     let newArray=new Array();
+//     for(let i in array)
+//         newArray[i]=array[i];
+//     console.log("newArray=",newArray);
+//     return newArray;
+// }
+
+function updateCanvas(sale,rect,line)
 {
-    let array=new Array();
-    for(let i in this)
-        array[i]=this[i];
-    return array;
+    rect.clear("white");
+    rect.paintAxis(CANVAS_WIDTH,CANVAS_HEIGHT,"rgba(60,38,146,0.8)",4);
+    rect.paintRectChart(sale,"rgba(120,11,55,0.6)");
+    line.clear("white");
+    line.paintAxis(CANVAS_WIDTH,CANVAS_HEIGHT,"rgba(60,38,146,0.8)",4);
+    line.paintLineChart(sale,"rgba(120,11,55,0.6)",3);
 }
 
-function clone(array)
+function updateInput(e,rect,line)
 {
-    let newArray=new Array();
-    for(let i in array)
-        newArray[i]=array[i];
-    return newArray;
+    // console.log("e.key=",e.key);
+    // console.log("typeof e.key=",typeof e.key);
+    if(e.key!=="Enter")
+        return;
+    // console.log("document.activeElement.nodeName.toLowerCase()=",document.activeElement.nodeName.toLowerCase());
+    if(document.activeElement.nodeName.toLowerCase()=="input")
+        // document.activeElement.onblur();
+    {
+        let input=document.activeElement;
+        let child=input.parentElement.parentElement.parentElement.children;
+        let root=input.parentElement.parentElement;
+        let th1=root.querySelector("th:nth-of-type(1)");
+        let th2=root.querySelector("th:nth-of-type(2)");
+        let order;
+        for(let i in root.children)
+        {
+            if(root.children[i]===input.parentElement)
+                order=i-2;
+        }
+
+        if(th2===null)
+        {
+            th2=th1;
+            let i;
+            for(i in child)
+            {
+                // console.log("child[i]=",child[i]);
+                if(child[i]===input.parentElement.parentElement)
+                    break;
+            }
+            th1=child[Math.floor(i/3)*3].querySelector("th:nth-of-type(1)");
+            order++;
+        }
+
+        for(let i in sourceData)
+        {
+            if(sourceData[i].product===th1.textContent&&sourceData[i].region===th2.textContent)
+            {
+                sourceData[i].sale[order]=Number(input.value);
+                updateCanvas(sourceData[i].sale,rect,line);
+            }
+        }
+
+        localStorage.setItem("sData",JSON.stringify(sourceData));
+        let parent=input.parentElement;
+        let value=input.value;
+        parent.append(value);
+        input.innerHTML="";
+        input.style.display="none";
+    }
 }

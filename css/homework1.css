@@ -108,6 +108,7 @@ input.form-input
     background-color:transparent;
     font-size:0.9rem;
     padding:0;
+    color:rgb(61, 60, 59);
 }
 
 input:focus
