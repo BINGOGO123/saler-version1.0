@@ -42,7 +42,7 @@ CanvasPaint.prototype.paintRectChart=function(array,color)
 {
     if(array===undefined)
     {
-        console.log("Çë´«Èëarray²ÎÊı£¡");
+        console.log("è¯·ä¼ å…¥arrayå‚æ•°ï¼");
         return;
     }
     if(color===undefined)
@@ -67,7 +67,7 @@ CanvasPaint.prototype.paintLineChart=function(array,color,line,forceHeight)
 {
     if(array===undefined)
     {
-        console.log("Çë´«Èëarray²ÎÊı£¡");
+        console.log("è¯·ä¼ å…¥arrayå‚æ•°ï¼");
         return;
     }
     if(color===undefined)
@@ -99,7 +99,7 @@ CanvasPaint.prototype.paintAllLineChart=function(array)
 {
     if(array.length<=0)
     {
-        console.log("ÇëÖÁÉÙ´«ÈëÒ»¸öÊı×é");
+        console.log("è¯·è‡³å°‘ä¼ å…¥ä¸€ä¸ªæ•°ç»„");
         return;
     }
     let maxHeight=max(array[0]);

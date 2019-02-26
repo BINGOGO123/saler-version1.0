@@ -1,54 +1,64 @@
-const sourceData = [{
-    product: "ÊÖ»ú",
-    region: "»ª¶«",
+const fixedData = [{
+    product: "æ‰‹æœº",
+    region: "åä¸œ",
     sale: [120, 100, 140, 160, 180, 185, 190, 210, 230, 245, 255, 270]
 }, {
-    product: "ÊÖ»ú",
-    region: "»ª±±",
+    product: "æ‰‹æœº",
+    region: "ååŒ—",
     sale: [80, 70, 90, 110, 130, 145, 150, 160, 170, 185, 190, 200]
 }, {
-    product: "ÊÖ»ú",
-    region: "»ªÄÏ",
+    product: "æ‰‹æœº",
+    region: "åå—",
     sale: [220, 200, 240, 250, 260, 270, 280, 295, 310, 335, 355, 380]
 }, {
-    product: "±Ê¼Ç±¾",
-    region: "»ª¶«",
+    product: "ç¬”è®°æœ¬",
+    region: "åä¸œ",
     sale: [50, 60, 80, 110, 30, 20, 70, 30, 420, 30, 20, 20]
 }, {
-    product: "±Ê¼Ç±¾",
-    region: "»ª±±",
+    product: "ç¬”è®°æœ¬",
+    region: "ååŒ—",
     sale: [30, 35, 50, 70, 20, 15, 30, 50, 710, 130, 20, 20]
 }, {
-    product: "±Ê¼Ç±¾",
-    region: "»ªÄÏ",
+    product: "ç¬”è®°æœ¬",
+    region: "åå—",
     sale: [80, 120, 130, 140, 70, 75, 120, 90, 550, 120, 110, 100]
 }, {
-    product: "ÖÇÄÜÒôÏä",
-    region: "»ª¶«",
+    product: "æ™ºèƒ½éŸ³ç®±",
+    region: "åä¸œ",
     sale: [10, 30, 4, 5, 6, 5, 4, 5, 6, 5, 5, 25]
 }, {
-    product: "ÖÇÄÜÒôÏä",
-    region: "»ª±±",
+    product: "æ™ºèƒ½éŸ³ç®±",
+    region: "ååŒ—",
     sale: [15, 50, 15, 15, 12, 11, 11, 12, 12, 14, 12, 40]
 }, {
-    product: "ÖÇÄÜÒôÏä",
-    region: "»ªÄÏ",
+    product: "æ™ºèƒ½éŸ³ç®±",
+    region: "åå—",
     sale: [10, 40, 10, 6, 5, 6, 8, 6, 6, 6, 7, 26]
 }]
+
+var sourceData;
 
 const DIVITEM="div-item";
 const DIVREGION="div-region";
 const DIVFORM="div-form";
-const ITEMLIST=["ÊÖ»ú","±Ê¼Ç±¾","ÖÇÄÜÒôÏä"];
-const REGIONLIST=["»ª¶«","»ªÄÏ","»ª±±"];
+const ITEMLIST=["æ‰‹æœº","ç¬”è®°æœ¬","æ™ºèƒ½éŸ³ç®±"];
+const REGIONLIST=["åä¸œ","åå—","ååŒ—"];
 const CANVAS_WIDTH=500;
 const CANVAS_HEIGHT=300;
 var lastNode;
 
 window.onload=function()
 {
-    checkBox(DIVITEM,["È«²¿","ÊÖ»ú","±Ê¼Ç±¾","ÖÇÄÜÒôÏä"],1);
-    checkBox(DIVREGION,["È«²¿","»ª¶«","»ªÄÏ","»ª±±"],1);
+    checkBox(DIVITEM,["å…¨éƒ¨","æ‰‹æœº","ç¬”è®°æœ¬","æ™ºèƒ½éŸ³ç®±"],1);
+    checkBox(DIVREGION,["å…¨éƒ¨","åä¸œ","åå—","ååŒ—"],1);
+
+    if(localStorage.getItem("sData"))
+    {
+        localStorage.setItem("sData",JSON.stringify(fixedData));
+        sourceData=clone(fixedData);
+    }
+    else
+        sourceData=JSON.parse(localStorage.getItem("sData"));
 
     let divItem=document.getElementById(DIVITEM);
     let divRegion=document.getElementById(DIVREGION);
@@ -67,8 +77,8 @@ window.onload=function()
     divItem.onchange=changeOption;
     divRegion.onchange=changeOption;
     
-    let checkBoxItemAll=divItem.querySelector("#È«²¿");
-    let checkBoxRegionAll=divRegion.querySelector("#È«²¿");
+    let checkBoxItemAll=divItem.querySelector("#å…¨éƒ¨");
+    let checkBoxRegionAll=divRegion.querySelector("#å…¨éƒ¨");
 
     divItem.onclick=function(e)
     {
@@ -81,6 +91,10 @@ window.onload=function()
     window.onmouseover=function(e)
     {
         paintForm(e,rect,line);
+    }
+    divForm.onclick=function(e)
+    {
+        clickTd(e);
     }
 
     changeOption();
@@ -139,14 +153,14 @@ function changeOption()
     row=document.createElement("tr");
     col=document.createElement("th");
     col.rowSpan="2";
-    col.textContent="ÉÌÆ·";
+    col.textContent="å•†å“";
     row.appendChild(col);
     col=document.createElement("th");
     col.rowSpan="2";
-    col.textContent="µØÇø";
+    col.textContent="åœ°åŒº";
     row.appendChild(col);
     col=document.createElement("th");
-    col.textContent="ÏúÁ¿";
+    col.textContent="é”€é‡";
     col.colSpan="12";
     row.appendChild(col);
     thead.appendChild(row);
@@ -155,7 +169,7 @@ function changeOption()
     for(let i=0;i<12;i++)
     {
         col=document.createElement("th");
-        col.textContent=(i+1).toString()+"ÔÂ";
+        col.textContent=(i+1).toString()+"æœˆ";
         row.appendChild(col);
     }
     thead.appendChild(row);
@@ -180,7 +194,7 @@ function changeOption()
             let sale=findArray(arrayItem[i],arrayRegion[j]);
             if(sale===-1)
             {
-                console.log(arrayItem[i]+" "+arrayRegion[j]+"Óöµ½´íÎó£¡");
+                console.log(arrayItem[i]+" "+arrayRegion[j]+"é‡åˆ°é”™è¯¯ï¼");
                 continue;
             }
             // console.log("sale=",sale);
@@ -226,11 +240,11 @@ function selectAll(e,name)
     for(;thing.nodeName.toLowerCase()!="label";thing=thing.parentElement)
         if(thing.nodeName.toLowerCase()==div)
         {
-            console.log("thing.nodeName.toLowerCase()==div","³öÏÖ´íÎó");
+            console.log("thing.nodeName.toLowerCase()==div","å‡ºç°é”™è¯¯");
             return;
         }
 
-    if(thing.id=="È«²¿")
+    if(thing.id=="å…¨éƒ¨")
     {
         if(thing.children[0].checked)
         {
@@ -322,4 +336,70 @@ function paintAll(line)
         para[i]=sourceData[i].sale;
     }
     line.paintAllLineChart(para);
+}
+
+function clickTd(e)
+{
+    if(e.target.nodeName.toLowerCase()!=="td")
+        return;
+
+    let input=document.createElement("input");
+    input.type="text";
+    input.className="form-input"
+    input.value=e.target.textContent;
+    e.target.innerHTML="";
+    e.target.appendChild(input);
+    input.focus();
+    input.onblur=function()
+    {
+        input.parentElement.innerHTML=input.value;
+        let child=input.parentElement.parentElement.parentElement.children;
+        let root=input.parentElement.parentElement.children;
+        let th1=root.querySelector("th:nth-of-type(1)");
+        let th2=root.querySelector("th:nth-of-type(2)");
+        let order;
+        for(let i in root)
+        {
+            if(root[i]===input.parentElement)
+                order=i-2;
+        }
+
+        if(th2===null)
+        {
+            th2=th1;
+            let i;
+            for(i in child)
+            {
+                console.log("child[i]=",child[i]);
+                if(child[i]===input.parentElement.parentElement)
+                    break;
+            }
+            th1=child[Math.floor(i/3)*3].querySelector("th:nth-of-type(1)");
+            order++;
+        }
+
+        for(let i in sourceData)
+        {
+            if(sourceData[i].product===th1.textContent&&sourceData[i].region===th2.textContent)
+                sourceData[i].sale[order]=Number(input.value);
+        }
+
+        localStorage.setItem("sData",JSON.parse(sourceData));
+    }
+}
+
+Array.prototype.clone=function()
+{
+    let array=new Array();
+    for(let i in this)
+        array[i]=this[i];
+    return array;
+}
+
+function clone(array)
+{
+    let newArray=new Array();
+    for(let i in array)
+        newArray[i]=array[i];
+    return newArray;
 }

@@ -70,7 +70,7 @@ table
 {
     /* border:solid 2px rgba(137, 207, 245, 0.3); */
     border-collapse: collapse;
-
+    table-layout:fixed;
 }
 
 td,th
@@ -97,4 +97,21 @@ tr.normal
 tr.mouse-over
 {
     background-color:rgba(86, 154, 231, 0.8);
+}
+
+input.form-input
+{
+    width:25px;
+    border:none;
+    display:inline-box;
+    margin:0;
+    background-color:transparent;
+    font-size:0.9rem;
+    padding:0;
+}
+
+input:focus
+{
+    /* border-color:black; */
+    outline:0;
 }
