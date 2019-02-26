@@ -103,6 +103,10 @@ window.onload=function()
     {
         updateInput(e,rect,line);
     }
+    // window.onhashchange=function(e)
+    // {
+
+    // }
 
     changeOption();
     paintAll(line);
